@@ -74,7 +74,8 @@ public class XPEnhancer extends JavaPlugin {
 	public Store newStore(Location loc) {
 		
 		// Check to see if a store already exists at this location
-		if (! stores.isEmpty()  &&  ! getStore(loc).equals(null) ) return null; 
+		
+		if ( ! ( getStore(loc) == null ) ) return null;
 		
 		// Using the length of the store-array for store-id, but am afraid that'll bite me in the ass pretty soon...
 		// What will happen when I'm reading to and from the config file???
@@ -107,14 +108,23 @@ public class XPEnhancer extends JavaPlugin {
 		
 		// Use a while loop to check if the location contains a store
 		// Inefficient? # of stores is low (~10)
-		Iterator<Store> itr = stores.iterator();
-		Store store = null;
-		while(itr.hasNext())	{
-			store = itr.next();
-			if ( store.compareLoc(loc) )	{
-				return store;
-			}
+
+		// Apparently, I don't know how to use iterators, as this only throws null pointer exceptions
+//		Iterator<Store> itr = stores.iterator();
+//		Store store = null;
+//		while(itr.hasNext())	{
+//			store = itr.next();
+//			if ( store.compareLoc(loc) )	{
+//				return store;
+//			}
+//		}
+//		
+		
+
+		for ( int i = 0; i < stores.size() ; i++)	{
+			if ( stores.get(i).compareLoc(loc) ) return stores.get(i);
 		}
+		
 		
 		// If while loop completed, no store with that location was found
 		return null;

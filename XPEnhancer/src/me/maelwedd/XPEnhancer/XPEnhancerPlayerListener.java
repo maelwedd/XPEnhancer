@@ -49,13 +49,14 @@ public class XPEnhancerPlayerListener extends PlayerListener{
 					
 					Store newStore = plugin.newStore(event.getClickedBlock().getLocation());
 					
-					if  ( ! newStore.equals(null) )	{
-//						plugin.getServer().broadcast("Store created", "xpenhancer.create");
-						player.chat("I created a store: " + newStore.getBlockX() + "," + newStore.getBlockY() + "," + newStore.getBlockZ() );
-					}
-					else	{
+					if  ( newStore == null )	{
 //						plugin.getServer().broadcast("Store already exists", "xpenhancer.create");
 						player.chat("I'm a loser and can't even create a simple store...");
+					}
+					else	{
+
+//						plugin.getServer().broadcast("Store created", "xpenhancer.create");
+						player.chat("I created a store: " + newStore.getBlockX() + "," + newStore.getBlockY() + "," + newStore.getBlockZ() );
 					}
 					
 				}
