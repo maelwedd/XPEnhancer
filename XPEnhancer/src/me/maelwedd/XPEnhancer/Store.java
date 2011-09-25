@@ -2,17 +2,22 @@ package me.maelwedd.XPEnhancer;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.config.Configuration;
 
 public class Store extends Location{
 	
-	public Goods goods;
+	public Goods goods = null;
+	private boolean activated = false;
 	
-	public Store(World world, double x, double y, double z, int storeID, Goods goods, Configuration STORES) {
+	Configuration STORES;
+
+	public Store(World world, double x, double y, double z, int storeID, Configuration STORES) {
 		super(world, x, y, z);
-		this.goods = goods;
+
+		this.STORES = STORES;
 		
-		STORES.setProperty(storeID + ".goods", goods.name);
 		STORES.setProperty(storeID + ".world", world.getName());
 		STORES.setProperty(storeID + ".location.x", x);
 		STORES.setProperty(storeID + ".location.y", y);
@@ -43,5 +48,66 @@ public class Store extends Location{
 		return false;
 	}
 
+	public boolean isBlock()	{
+		return goods.isBlock();
+	}
+	
+	public boolean setGoods(Goods goods)	{
+		if (! activated ) {
+			this.goods = goods;
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean activate() {
+		// It's already activated, why are you doing this?
+		if ( activated ) return true;
+		
+		// Only activate the store if the store contains goods 
+		if (! (goods == null) ) {
+			activated = true;
+			return true;
+		}
+		// If there are no goods yet, deny activation
+		return false;
+	}
+	
+	public boolean isActive()	{
+		return activated;
+	}
+	
+	// Keep all code regarding the actual buying here
+	public boolean buy(Player player)	{
+		
+		// Limit the store to only accept if the correct amount of blocks are in hand, makes the trade-in-code simpler
+		if (! (player.getItemInHand().getAmount() == goods.costquantity) ) {
+			player.sendMessage("Required trade-in quantity is #" + goods.costquantity + " of " + goods.name);
+			return false;
+		}
+		
+		// Subtract the required amount of XP, don't mention it if the cost is 0 (avoid cluttering/confusing the player)
+		if ( goods.cost > 0 )	{
+			// First check to see if the player can afford this
+			int newXP = player.getExperience() - goods.cost;
+			// Check to see if the player can afford it, <0 means ending up with negative XP, no good...
+			if ( newXP < 0 ) 	{
+				player.sendMessage("Transaction cost too high: " + goods.cost + " -- Player XP only: " + player.getExperience());
+				return false;
+			}
+			player.setExperience(newXP);
+			player.sendMessage("Transaction cost: " + goods.cost + " -- Remaining XP: " + newXP);
+		}
+		
+		// The store replaces the item in hand with the store goods, simple way to pay materials for the use
+		player.setItemInHand(new ItemStack(goods.id, goods.quantity));
+		player.sendMessage("Store used: " + goods.name);
+		
+		// If the store is an entity-store, provide the player the opportunity to "cash in" the entity at a later date
+		// TODO: this - Including making an action for this in the listener
+
+		
+		return true;
+	}
 	
 }

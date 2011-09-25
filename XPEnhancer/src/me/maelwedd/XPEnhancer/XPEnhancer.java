@@ -3,6 +3,7 @@ package me.maelwedd.XPEnhancer;
 import java.util.logging.Logger;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
@@ -46,6 +47,7 @@ public class XPEnhancer extends JavaPlugin {
 		log.info("Loading: " + name + " v" + version + " by " + author);
 		
 		CONFIG = getConfiguration();
+		readLocations();
 		makeDefaultConfig();
 		CONFIG.load();
 		
@@ -61,14 +63,17 @@ public class XPEnhancer extends JavaPlugin {
 	}
 	
 	public void makeDefaultConfig()	{
-			
-		goods.add(new Goods("grassblock", "block", 2, 0, true, CONFIG));
-		//goods.add(new Goods("cow", "entity", "Cow", 0, true, CONFIG));
+		
+		// TODO: Check to see if config file exist, and not write a default one if it does
+		goods.add(new Goods("grassblock", "block", Material.GRASS.getId(), 1, Material.DIRT.getId(), true, CONFIG));
+		goods.add(new Goods("cooked bacon", "block", Material.GRILLED_PORK.getId(), 1, Material.PORK.getId(), true, CONFIG));
+		
 		
 	}
 
 	public void readLocations()	{
-		STORES.getAll();
+		// TODO: Make this into a function to read in stores stored in the config-file "stores"
+//		STORES.getAll();
 	}
 	
 	public Store newStore(Location loc) {
@@ -81,7 +86,7 @@ public class XPEnhancer extends JavaPlugin {
 		// What will happen when I'm reading to and from the config file???
 		//
 		// For now always using goods.get(0) = grassblock as goods
-		Store newStore = new Store(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), stores.size() + 1, goods.get(0), STORES);
+		Store newStore = new Store(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), stores.size() + 1, STORES);
 		stores.add(newStore);
 		
 		return newStore;
@@ -129,6 +134,14 @@ public class XPEnhancer extends JavaPlugin {
 		// If while loop completed, no store with that location was found
 		return null;
 		
+	}
+	
+	// Returns the goods if the material is allowed goods, null indicates invalid material
+	public Goods findGoods(Material mat)	{
+		for ( int i = 0; i < goods.size() ; i++ )	{
+			if ( goods.get(i).use_id == mat.getId() )	return goods.get(i);
+		}
+		return null;
 	}
 	
 }

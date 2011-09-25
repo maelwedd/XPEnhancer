@@ -1,6 +1,7 @@
 package me.maelwedd.XPEnhancer;
 
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -13,6 +14,8 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
+
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 
 public class XPEnhancerPlayerListener extends PlayerListener{
@@ -33,43 +36,83 @@ public class XPEnhancerPlayerListener extends PlayerListener{
 			// If player presses stone-button, that's our cue to action
 			// 
 			
-			player.chat("I right-clicked on " + event.getClickedBlock().getType() + " with " + player.getItemInHand().getTypeId() + " !");
-
-			player.chat("I should have clicked on a " + Material.STONE_BUTTON + " with a " + Material.STICK.getId() + " to make a store");
-			player.chat("I should have used a " + Material.BOOK.getId() + " to use the store");
+			Location loc = event.getClickedBlock().getLocation();
 			
-			if (event.getClickedBlock().getType().equals(Material.STONE_BUTTON))	{
+			if ( event.getClickedBlock().getTypeId() == Material.STONE_BUTTON.getId() )	{
 				
 
-				player.chat("Match: Stone button");
-//				if (player.hasPermission("xpenhancer.create") && player.getItemInHand().equals(Material.STICK))	{
-				if ( player.getItemInHand().getTypeId() == Material.STICK.getId() )	{
-					
-					player.chat("Match: In hand Stick");
-					
-					Store newStore = plugin.newStore(event.getClickedBlock().getLocation());
-					
-					if  ( newStore == null )	{
-//						plugin.getServer().broadcast("Store already exists", "xpenhancer.create");
-						player.chat("I'm a loser and can't even create a simple store...");
-					}
-					else	{
+				// Code to be run to create/edit/delete stores
+				// My permissions check doesnt seem to work, weird...
+//				if ( player.hasPermission("xpenhancer.create") )	{
+//				if ( player.getName().toLowerCase() == "maelwedd" )	{
+				// Namecheck not working either? What the...
+				if ( true )	{
 
-//						plugin.getServer().broadcast("Store created", "xpenhancer.create");
-						player.chat("I created a store: " + newStore.getBlockX() + "," + newStore.getBlockY() + "," + newStore.getBlockZ() );
+					// We use the stick to create/activate/delete stores
+					if (player.getItemInHand().getTypeId() == Material.STICK.getId()) {
+							
+						// Try to create a new store, a null return means a store already exist at that location
+						Store newStore = plugin.newStore(loc);
+						
+						if  ( newStore == null )	{
+
+							// TODO: Add method to delete existing stores here
+							
+							// A store already exist here, get it.
+							// newStore is now existingStore in a way...
+							newStore = plugin.getStore(loc);
+
+							if ( newStore.isActive() ) {
+								player.sendMessage("Store already exist!");
+							}
+							else {
+								// The activate command returns false if it can't activate due to no goods for store set
+								if ( newStore.activate() ) {
+									player.sendMessage("Store activated: " + newStore.goods.name);
+								}
+								else {
+									player.sendMessage("Store NOT activated: Did you add goods?");
+								}
+							}
+							
+						}
+						else	{
+							player.sendMessage("Store created! Use objects to set goods.");
+						}
 					}
-					
+					else {
+						
+						// Check if ItemInHand is "legal" goods, if it is, and there is an unactivated store, set that goods to the store goods
+						Goods goods = plugin.findGoods(player.getItemInHand().getType() ); 
+						if ( !(goods == null))	{
+							// Check if there is a store at location
+							Store store = plugin.getStore(loc);
+							if ( !(store == null) && !store.isActive() )	{
+								store.setGoods(goods);
+								player.sendMessage("Goods set to: " + goods.name);
+							}
+
+						}
+
+						
+					}
 				}
-//				else if (player.hasPermission("xpenhancer.use") && player.getItemInHand().equals(Material.BOOK))	{
-				else if ( player.getItemInHand().getTypeId() == Material.BOOK.getId() )	{
+
+
+				// Code to be run to use a store
+//				if ( player.hasPermission("xpenhancer.use"))	{
+				// Permissions check is busted somehow...
+				if ( true )	{
 					
-					player.chat("Match: In hand Book");
-					
-					Store store = plugin.getStore(event.getClickedBlock().getLocation());
-					if (! store.equals(null) ) {
-						player.setExperience(player.getExperience() - store.goods.cost);
-						player.setItemInHand(new ItemStack(store.goods.id, 1));
-						player.chat("I'm a store-user!");
+					Store store = plugin.getStore(loc);
+					if (! ( store == null ) && store.isActive() ) {
+						
+						if ( player.getItemInHand().getTypeId() == store.goods.use_id ) {
+							
+							store.buy(player);
+
+						}
+						else player.sendMessage("Store rules: " + Material.getMaterial(store.goods.use_id).toString() + " in exchange for " + store.goods.name );
 					}
 					
 					
