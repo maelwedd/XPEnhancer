@@ -126,7 +126,7 @@ public class XPEnhancerPlayerListener extends PlayerListener{
 							store.buy(player, plugin);
 
 						}
-						else player.sendMessage("Alchemy rules: " + Material.getMaterial(store.goods.use_id).toString() + " in exchange for " + store.goods.name );
+						else player.sendMessage("Alchemy rules: " + Material.getMaterial(store.goods.use_id).toString().toLowerCase() + " in exchange for " + store.goods.name );
 					}
 					
 					

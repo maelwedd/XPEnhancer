@@ -15,10 +15,9 @@ public class Goods {
 	public int cost = 0;
 	public int costquantity = 1;
 	public int quantity = 1;
-	public boolean enabled = false;
 	public int use_id = 0;
 	
-	public Goods(String name, String type, int id, int cost, int use_id, boolean enabled, Configuration CONFIG)	{
+	public Goods(String name, String type, int id, int cost, int use_id, Configuration CONFIG)	{
 		this.name = name;
 		this.type = type;
 		this.id = id;
@@ -30,18 +29,28 @@ public class Goods {
 		else	{
 			this.cost = 0;
 		}
-		
-		this.enabled = enabled;
+
 		this.use_id = use_id;
 		
 		CONFIG.setProperty(name + ".type", type);
 		CONFIG.setProperty(name + ".id", id);
 		CONFIG.setProperty(name + ".cost.XP", cost);
 		CONFIG.setProperty(name + ".cost.quantity", costquantity);
-		CONFIG.setProperty(name + ".enabled", enabled);
 		CONFIG.setProperty(name + ".use_id", use_id);
 		CONFIG.setProperty(name + ".quantity", quantity);
 		
+		CONFIG.save();
+		
+	}
+	
+	public Goods(String name, String type, int id, int cost, int use_id, int quantity, int costquantity, Configuration CONFIG)	{
+		this(name, type, id, cost, use_id, CONFIG);
+		
+		this.quantity = quantity;
+		this.costquantity = costquantity;
+		
+		CONFIG.setProperty(name + ".cost.quantity", costquantity);
+		CONFIG.setProperty(name + ".quantity", quantity);
 		CONFIG.save();
 		
 	}

@@ -1,6 +1,7 @@
 package me.maelwedd.XPEnhancer;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,12 +12,15 @@ public class Store extends Location{
 	public Goods goods = null;
 	private boolean activated = false;
 	
+	private String storeID;
+	
 	Configuration STORES;
 
-	public Store(World world, double x, double y, double z, int storeID, Configuration STORES) {
+	public Store(World world, double x, double y, double z, String storeID, Configuration STORES) {
 		super(world, x, y, z);
 
 		this.STORES = STORES;
+		this.storeID = storeID;
 		
 		STORES.setProperty(storeID + ".world", world.getName());
 		STORES.setProperty(storeID + ".location.x", x);
@@ -53,8 +57,11 @@ public class Store extends Location{
 	}
 	
 	public boolean setGoods(Goods goods)	{
+		if ( goods == null ) return false;
 		if (! activated ) {
 			this.goods = goods;
+			STORES.setProperty(storeID + ".goods", goods.name);
+			STORES.save();
 			return true;
 		}
 		return false;
@@ -82,7 +89,7 @@ public class Store extends Location{
 		
 		// Limit the store to only accept if the correct amount of blocks are in hand, makes the trade-in-code simpler
 		if (! (player.getItemInHand().getAmount() == goods.costquantity) ) {
-			player.sendMessage("Alchemy required specifiq quantities! You need " + goods.costquantity + " of " + goods.name);
+			player.sendMessage("Alchemy required specifiq quantities! You need " + goods.costquantity + " of " + needs());
 			return false;
 		}
 		
@@ -101,7 +108,7 @@ public class Store extends Location{
 		
 		// The store replaces the item in hand with the store goods, simple way to pay materials for the use
 		player.setItemInHand(new ItemStack(goods.id, goods.quantity));
-		player.sendMessage("Alchemy success: " + goods.name);
+		player.sendMessage("Alchemy success: " + toString());
 		
 		// If the store is an entity-store, provide the player the opportunity to "cash in" the entity at a later date
 		if ( ! isBlock() )	{
@@ -109,6 +116,17 @@ public class Store extends Location{
 		}
 		
 		return true;
+	}
+	
+	public String needs()	{
+		 String needs = Material.getMaterial(goods.use_id).toString().toLowerCase();
+		 // Replace underscores with spaces to make it nicer
+		 needs.replaceAll("_", " ");
+		 return needs;
+	}
+	
+	public String toString()	{
+		return goods.name.toLowerCase();
 	}
 	
 }
