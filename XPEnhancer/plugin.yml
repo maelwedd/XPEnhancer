@@ -1,3 +1,16 @@
 name: XPEnhancer
 main: me.maelwedd.XPEnhancer.XPEnhancer
-version: 0.2
+version: 0.3
+
+permissions:
+    xpenhancer.*:
+        description: Gives access to all XPEnhancer commands
+        children:
+            xpenhancer.create: true
+            xpenhancer.use: true
+    xpenhancer.create:
+        description: Allows you to create stores
+        default: op
+    xpenhancer.use:
+        description: Allows you to use stores
+        default: op
