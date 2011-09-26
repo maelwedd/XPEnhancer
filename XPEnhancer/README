@@ -10,7 +10,8 @@ Usage:
     * Permissions support:
     	* xpenhancer.create for creating stores in-game
     	* xpenhancer.use for using stores
-    * Goods must be created before adding stores in-game! Default config will be created on first run.
+    * Goods must be created before adding stores in-game!
+      Default config will be created on first run.
     * To create a store in-game:
     	* Place a stone-button, this will be the store
     	* Right click button with a stick, this will initiate the creation
@@ -18,7 +19,8 @@ Usage:
     	* (Repeat above step if you used the wrong material)
     	* Right click with a stick again to activate store 
     	* Tips: You will be notified when something worked.
-    	* Note: There is no method for deleting a store in-game; simply destroying the button will NOT work 
+    	* Note: There is no method for deleting a store in-game;
+    	  simply destroying the button will NOT work 
     * To use a store:
 	* Right click the button to get instructions
 	* Right click the button with object as described in instructions to buy
