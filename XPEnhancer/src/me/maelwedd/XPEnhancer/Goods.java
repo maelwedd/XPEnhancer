@@ -13,8 +13,11 @@ public class Goods {
 	public String type;
 	public int id;
 	public int cost = 0;
+	
+	// All quantities defaults to 1 if not set, this will be the most used value
 	public int costquantity = 1;
 	public int quantity = 1;
+	
 	public int use_id = 0;
 	
 	public Goods(String name, String type, int id, int cost, int use_id, Configuration CONFIG)	{
@@ -68,7 +71,7 @@ public class Goods {
 		CreatureType spawn = null;
 		
 		// This was the easiest way to do it...
-		if ( type.toLowerCase().equals("cow") ) spawn = CreatureType.COW;
+		if ( name.toLowerCase().equals("cow") ) spawn = CreatureType.COW;
 		else if ( name.toLowerCase().equals("chicken") ) spawn = CreatureType.CHICKEN;
 		else if ( name.toLowerCase().equals("sheep") ) spawn = CreatureType.SHEEP;
 		else if ( name.toLowerCase().equals("pig") ) spawn = CreatureType.PIG;
@@ -76,10 +79,14 @@ public class Goods {
 		if ( spawn == null ) return false;
 		
 		player.getWorld().spawnCreature(loc, spawn);
-		player.sendMessage("Teleportation used: " + type.toLowerCase() + " spawned.");
+		player.sendMessage("Transubstantiation power used: " + type.toLowerCase() + " successfully grown.");
 		
 		return true;
 				
+	}
+	
+	public String toString()	{
+		return name.toLowerCase();
 	}
 	
 }

@@ -89,7 +89,7 @@ public class Store extends Location{
 		
 		// Limit the store to only accept if the correct amount of blocks are in hand, makes the trade-in-code simpler
 		if (! (player.getItemInHand().getAmount() == goods.costquantity) ) {
-			player.sendMessage("Alchemy required specifiq quantities! You need " + goods.costquantity + " of " + needs());
+			player.sendMessage("Alchemy requires specifiq quantities! You need " + goods.costquantity + " of " + needs() );
 			return false;
 		}
 		
@@ -99,16 +99,16 @@ public class Store extends Location{
 			int newXP = player.getExperience() - goods.cost;
 			// Check to see if the player can afford it, <0 means ending up with negative XP, no good...
 			if ( newXP < 0 ) 	{
-				player.sendMessage("Transaction cost too high: " + goods.cost + " -- Player XP only: " + player.getExperience());
+				player.sendMessage("Transubstantiation cost too high: " + goods.cost + " -- Player XP only: " + player.getExperience());
 				return false;
 			}
 			player.setExperience(newXP);
-			player.sendMessage("Transaction cost: " + goods.cost + " -- Remaining XP: " + newXP);
+			player.sendMessage("Transubstantiation cost: " + goods.cost + " -- Remaining XP: " + newXP);
 		}
 		
 		// The store replaces the item in hand with the store goods, simple way to pay materials for the use
 		player.setItemInHand(new ItemStack(goods.id, goods.quantity));
-		player.sendMessage("Alchemy success: " + toString());
+		player.sendMessage("Transubstantiation success: " + toString());
 		
 		// If the store is an entity-store, provide the player the opportunity to "cash in" the entity at a later date
 		if ( ! isBlock() )	{
@@ -121,12 +121,19 @@ public class Store extends Location{
 	public String needs()	{
 		 String needs = Material.getMaterial(goods.use_id).toString().toLowerCase();
 		 // Replace underscores with spaces to make it nicer
-		 needs.replaceAll("_", " ");
-		 return needs;
+		 return needs.replaceAll("_", " ");
+	}
+	
+	public String gives()	{
+		if ( goods.isBlock() )	{
+			return Material.getMaterial(goods.id).toString().toLowerCase().replaceAll("_", " ");
+		}
+		// If it's not a block, but an entity, we use the name of the store to specify what you get... (Bad, I know...)
+		return goods.toString().replaceAll("_", " ");		
 	}
 	
 	public String toString()	{
-		return goods.name.toLowerCase();
+		return goods.toString();
 	}
 	
 }

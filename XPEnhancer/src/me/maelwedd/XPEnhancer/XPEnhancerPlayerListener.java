@@ -58,9 +58,7 @@ public class XPEnhancerPlayerListener extends PlayerListener{
 				
 
 				// Code to be run to create/edit/delete stores
-				// My permissions check doesnt seem to work, weird...
-//				if ( player.hasPermission("xpenhancer.create") )	{
-				if ( true ) {
+				if ( player.hasPermission("xpenhancer.create") )	{
 
 					// We use the stick to create/activate/delete stores
 					if (inHand == Material.STICK.getId()) {
@@ -114,9 +112,8 @@ public class XPEnhancerPlayerListener extends PlayerListener{
 
 
 				// Code to be run to use a store
-//				if ( player.hasPermission("xpenhancer.use"))	{
-				// Permissions check is busted somehow...
-				if ( true )	{
+				if ( player.hasPermission("xpenhancer.use"))	{
+
 					
 					Store store = plugin.getStore(loc);
 					if (! ( store == null ) && store.isActive() ) {
@@ -126,7 +123,7 @@ public class XPEnhancerPlayerListener extends PlayerListener{
 							store.buy(player, plugin);
 
 						}
-						else player.sendMessage("Alchemy rules: " + Material.getMaterial(store.goods.use_id).toString().toLowerCase() + " in exchange for " + store.goods.name );
+						else player.sendMessage("Alchemy rules: " + store.needs() + " in exchange for " + store.gives() );
 					}
 					
 					
