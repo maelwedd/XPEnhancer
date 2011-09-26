@@ -21,15 +21,18 @@ Usage:
     		* Note: There is no method for deleting a store in-game; simply destroying the button will NOT work 
 	* To use a store:
 			* Right click the button to get instructions
-			* Right click the button with object as described in instructions to buy (as defined in use_id in config.yml)
+			* Right click the button with object as described in instructions to buy
+			  (as defined in use_id in config.yml)
 			* If you bought a block, the block you used will be replaced with the one you bought
-			* If you bought an entity, the block you used may be changed, and to "cash in" your entity, simply _left click_ on the desired location with a stick
+			* If you bought an entity, the block you used may be changed, and to "cash in" your entity,
+			  simply _left click_ on the desired location with a stick
 			* Note: If you do not have enough XP the transaction will be cancelled
 
 Changes:
 
 0.3 : First version with a REAME-file!
-	  Store creation and usage is working. Permissions is supported, if not installed, fall backs to only OPs (create/use).
+	  Store creation and usage is working.
+	  Permissions is supported, if not installed, fall backs to only OPs (create/use).
 	  Not fixed: Must shutdown server to change configuration.
 	  Known error: Goods config (config.yml) contains two fields for XP (cost.xp & cost.XP)
 	  Dated 26-09-2011
