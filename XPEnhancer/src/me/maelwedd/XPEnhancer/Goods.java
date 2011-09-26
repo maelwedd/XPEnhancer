@@ -1,5 +1,9 @@
 package me.maelwedd.XPEnhancer;
 
+import org.bukkit.Location;
+import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
 
@@ -43,8 +47,30 @@ public class Goods {
 	}
 	
 	public boolean isBlock()	{
-		if ( type.toLowerCase() == "block" ) return true;
+		if ( type.toLowerCase().equals("block") ) return true;
 		return false;
+	}
+	
+	public boolean spawn(Location loc, Player player)	{
+		
+		// Only goods that are entities (ie not blocks) can be used to spawn things
+		if ( isBlock() ) return false;
+		
+		CreatureType spawn = null;
+		
+		// This was the easiest way to do it...
+		if ( type.toLowerCase().equals("cow") ) spawn = CreatureType.COW;
+		else if ( name.toLowerCase().equals("chicken") ) spawn = CreatureType.CHICKEN;
+		else if ( name.toLowerCase().equals("sheep") ) spawn = CreatureType.SHEEP;
+		else if ( name.toLowerCase().equals("pig") ) spawn = CreatureType.PIG;
+				
+		if ( spawn == null ) return false;
+		
+		player.getWorld().spawnCreature(loc, spawn);
+		player.sendMessage("Teleportation used: " + type.toLowerCase() + " spawned.");
+		
+		return true;
+				
 	}
 	
 }

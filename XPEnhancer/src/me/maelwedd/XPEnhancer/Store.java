@@ -78,11 +78,11 @@ public class Store extends Location{
 	}
 	
 	// Keep all code regarding the actual buying here
-	public boolean buy(Player player)	{
+	public boolean buy(Player player, XPEnhancer plugin)	{
 		
 		// Limit the store to only accept if the correct amount of blocks are in hand, makes the trade-in-code simpler
 		if (! (player.getItemInHand().getAmount() == goods.costquantity) ) {
-			player.sendMessage("Required trade-in quantity is #" + goods.costquantity + " of " + goods.name);
+			player.sendMessage("Alchemy required specifiq quantities! You need " + goods.costquantity + " of " + goods.name);
 			return false;
 		}
 		
@@ -101,11 +101,12 @@ public class Store extends Location{
 		
 		// The store replaces the item in hand with the store goods, simple way to pay materials for the use
 		player.setItemInHand(new ItemStack(goods.id, goods.quantity));
-		player.sendMessage("Store used: " + goods.name);
+		player.sendMessage("Alchemy success: " + goods.name);
 		
 		// If the store is an entity-store, provide the player the opportunity to "cash in" the entity at a later date
-		// TODO: this - Including making an action for this in the listener
-
+		if ( ! isBlock() )	{
+			plugin.bought(player, goods);
+		}
 		
 		return true;
 	}

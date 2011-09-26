@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +28,10 @@ public class XPEnhancer extends JavaPlugin {
 	private ArrayList<Goods> goods = new ArrayList<Goods>();
 	private ArrayList<Store> stores = new ArrayList<Store>();
 	
+	// Simplest way I know of for storing two values...
+	private ArrayList<Player> boughtPlayer = new ArrayList<Player>();
+	private ArrayList<Goods> boughtGoods = new ArrayList<Goods>();
+	
 	private final XPEnhancerPlayerListener playerListener = new XPEnhancerPlayerListener(this);
 	
 	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd/HH:mm:ss");
@@ -34,8 +39,8 @@ public class XPEnhancer extends JavaPlugin {
 	
 	
 	public  String name = "XPEnhancer";
-	public  String version = "0.0" + "build " + dateFormat.format(cal.getTime());
-	public  String author = "Maelwedd (maelwedd@starstruct.org)";
+	public  String version = "0.1" + "build " + dateFormat.format(cal.getTime());
+	public  String author = "Maelwedd";
 	
 	public static Object button;
 	
@@ -65,8 +70,11 @@ public class XPEnhancer extends JavaPlugin {
 	public void makeDefaultConfig()	{
 		
 		// TODO: Check to see if config file exist, and not write a default one if it does
-		goods.add(new Goods("grassblock", "block", Material.GRASS.getId(), 1, Material.DIRT.getId(), true, CONFIG));
-		goods.add(new Goods("cooked bacon", "block", Material.GRILLED_PORK.getId(), 1, Material.PORK.getId(), true, CONFIG));
+		goods.add(new Goods("grassblock", "block", Material.GRASS.getId(), 150, Material.DIRT.getId(), true, CONFIG));
+		goods.add(new Goods("cow", "entity", Material.RAW_BEEF.getId(), 75, Material.COOKED_BEEF.getId(), true, CONFIG));
+		goods.add(new Goods("pig", "entity", Material.PORK.getId(), 75, Material.GRILLED_PORK.getId(), true, CONFIG));
+		goods.add(new Goods("sheep", "entity", Material.AIR.getId(), 75, Material.WOOL.getId(), true, CONFIG));
+		goods.add(new Goods("chicken", "entity", Material.RAW_CHICKEN.getId(), 75, Material.COOKED_CHICKEN.getId(), true, CONFIG));
 		
 		
 	}
@@ -142,6 +150,24 @@ public class XPEnhancer extends JavaPlugin {
 			if ( goods.get(i).use_id == mat.getId() )	return goods.get(i);
 		}
 		return null;
+	}
+	
+	public void bought(Player player, Goods goods)	{
+		boughtPlayer.add(player);
+		boughtGoods.add(goods);
+	}
+
+	public Goods boughtUse(Player player)	{
+
+		// This actually makes it so that a player can buy several spawns, and use them in the same order as they were bought
+		int ix = boughtPlayer.indexOf(player);
+		
+		// ix = -1 means the player was not in the list, ie the player have not purchased a spawn-use
+		if ( ix < 0 ) return null;
+
+		// Remove this item and return the goods that was purchased earlier
+		boughtPlayer.remove(ix);
+		return boughtGoods.remove(ix);
 	}
 	
 }

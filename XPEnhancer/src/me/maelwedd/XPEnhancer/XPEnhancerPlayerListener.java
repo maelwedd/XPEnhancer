@@ -27,29 +27,43 @@ public class XPEnhancerPlayerListener extends PlayerListener{
 	
 	// What to do on PlayerInteractEvent
 	public void onPlayerInteract(PlayerInteractEvent event)	{
-		
+
+		// Let's get the most used values
 		Player player = event.getPlayer();
+		int inHand = player.getItemInHand().getTypeId();
 		
+			// If the player right clicks air with a stick, they're saying they want to spawn the creature there
+			// Add permission support here when I figure that one out...
+			if ( inHand == Material.STICK.getId() && event.getAction().equals(Action.LEFT_CLICK_BLOCK) )	{
+				
+				Goods goods = plugin.boughtUse(player);
+				if ( goods != null ) {
+					goods.spawn(event.getClickedBlock().getLocation(), player);
+				}
+				
+			}
+			
 		
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))		{
+			
+			//NOTE: This is NOT player-location, but where the player clicked!
+			Location loc = event.getClickedBlock().getLocation();
+			int clickedType = event.getClickedBlock().getTypeId();
 		
+
+			
 			// If player presses stone-button, that's our cue to action
 			// 
-			
-			Location loc = event.getClickedBlock().getLocation();
-			
-			if ( event.getClickedBlock().getTypeId() == Material.STONE_BUTTON.getId() )	{
+			if ( clickedType == Material.STONE_BUTTON.getId() )	{
 				
 
 				// Code to be run to create/edit/delete stores
 				// My permissions check doesnt seem to work, weird...
 //				if ( player.hasPermission("xpenhancer.create") )	{
-//				if ( player.getName().toLowerCase() == "maelwedd" )	{
-				// Namecheck not working either? What the...
-				if ( true )	{
+				if ( true ) {
 
 					// We use the stick to create/activate/delete stores
-					if (player.getItemInHand().getTypeId() == Material.STICK.getId()) {
+					if (inHand == Material.STICK.getId()) {
 							
 						// Try to create a new store, a null return means a store already exist at that location
 						Store newStore = plugin.newStore(loc);
@@ -83,7 +97,7 @@ public class XPEnhancerPlayerListener extends PlayerListener{
 					else {
 						
 						// Check if ItemInHand is "legal" goods, if it is, and there is an unactivated store, set that goods to the store goods
-						Goods goods = plugin.findGoods(player.getItemInHand().getType() ); 
+						Goods goods = plugin.findGoods( player.getItemInHand().getType() ); 
 						if ( !(goods == null))	{
 							// Check if there is a store at location
 							Store store = plugin.getStore(loc);
@@ -107,12 +121,12 @@ public class XPEnhancerPlayerListener extends PlayerListener{
 					Store store = plugin.getStore(loc);
 					if (! ( store == null ) && store.isActive() ) {
 						
-						if ( player.getItemInHand().getTypeId() == store.goods.use_id ) {
+						if ( inHand == store.goods.use_id ) {
 							
-							store.buy(player);
+							store.buy(player, plugin);
 
 						}
-						else player.sendMessage("Store rules: " + Material.getMaterial(store.goods.use_id).toString() + " in exchange for " + store.goods.name );
+						else player.sendMessage("Alchemy rules: " + Material.getMaterial(store.goods.use_id).toString() + " in exchange for " + store.goods.name );
 					}
 					
 					
